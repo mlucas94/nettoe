@@ -27,6 +27,24 @@
  For information on how to build or install netToe please read the 
  INSTALL file include with the source package.
 
+
+
+                   --------== [ I18N ]==--------
+
+
+ For i18n support use `make` like this:
+
+  ---
+
+  make install
+  LANGUAGE=es
+  ./src/nettoe
+
+ ---
+
+ You can replace `es` with any other language suported (suported languages
+ are listed in `po/LINGUAS` file)
+
   
 
                    -----== [ HOW TO PLAY ]==-----

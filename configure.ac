@@ -18,6 +18,9 @@ AM_INIT_AUTOMAKE([1.9 -Wall -Werror no-define])
 AC_DEFINE([PACKAGE_RELEASE_DATE],
 	  ["March 21th, 2014"], [Date of source release.])
 
+dnl Set gettext files
+AM_GNU_GETTEXT([external])
+
 dnl Decide on using terminfo
 AC_ARG_WITH([terminfo],
   [AS_HELP_STRING([--without-terminfo],
@@ -198,7 +201,7 @@ AC_ARG_VAR([iconsdir], [base directory for icons [$(datadir)/icons]])
 AC_ARG_VAR([menudir], [location of menu descriptions [$(datadir)/menu]])
 AC_ARG_VAR([pixmapsdir], [location of pixmaps [$(datadir)/pixmaps]])
 
-AC_CONFIG_FILES([Makefile docs/Makefile src/Makefile test/Makefile
+AC_CONFIG_FILES([Makefile docs/Makefile src/Makefile po/Makefile.in test/Makefile
 		 desktop/Makefile])
 
 AC_OUTPUT

@@ -23,6 +23,8 @@
 #  include <config.h>
 #endif
 
+#include <locale.h>
+#include "gettext.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -45,6 +47,8 @@
 #include "network.h"
 #include "game.h"
 #include "board.h"
+
+#define _(x) gettext(x)
 
 /* Has network partner reported EOF? */
 int has_given_eof = 0;
@@ -109,6 +113,12 @@ static void reset_color (int sig)
 int main (int argc, char *argv[])
 {
 
+  /*Set up internationalization*/
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+	
+
   NO_BEEP   = 0; /* beeps are enabled by default */
                  /* --no-beep disable beeps      */
   NO_COLORS = 0; /* colors are enabled by default */
@@ -153,19 +163,19 @@ int main (int argc, char *argv[])
 	"        ---|---|---        |          ----|----|---- \n"
 
 #define YOU_WIN \
-	"\n You win !\n"
+	_("\n You win !\n")
 #define COMPUTER_WINS \
-	"\n Computer wins !\n"
+	_("\n Computer wins !\n")
 #define IS_A_DRAW \
-	"\n This is a draw !\n"
+	_("\n This is a draw !\n")
 #define COMPUTER_CONSIDERS \
-	"\n Computer is considering its move ...\n"
+	_("\n Computer is considering its move ...\n")
 #define WAITING_FOR_NAMED \
-	"\n Waiting for %s to choose whether to play again, or not ...\n"
+	_("\n Waiting for %s to choose whether to play again, or not ...\n")
 #define WANT_TO_PLAY \
-	"\n Do you want to play again ? [y/n]: "
+	_("\n Do you want to play again ? [y/n]: ")
 #define UNKNOWN_ANSWER \
-	" Unknown answer. I suppose you want to play again.\n"
+	_(" Unknown answer. I suppose you want to play again.\n")
 
 void print_header (int type)
 {
@@ -206,7 +216,7 @@ static void main_menu (void)
   nettoe_term_reset_color();
   printf ("\n   [ ");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("Main Menu");
+  printf (_("Main Menu"));
   nettoe_term_reset_color();
   printf (" ]\n\n");
 
@@ -215,7 +225,7 @@ static void main_menu (void)
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
   printf ("1");
   nettoe_term_reset_color();
-  printf (") Player vs ");
+  printf (_(") Player vs "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   printf ("C");
   nettoe_term_reset_color();
@@ -226,22 +236,22 @@ static void main_menu (void)
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
   printf ("2");
   nettoe_term_reset_color();
-  printf (") Player vs ");
+  printf (_(") Player vs "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  printf ("P");
+  printf (_("P"));
   nettoe_term_reset_color();
-  printf ("layer\n");
+  printf (_("layer\n"));
 
   /* Two players over network */
   printf ("   (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
   printf ("3");
   nettoe_term_reset_color();
-  printf (") Two players over ");
+  printf (_(") Two players over "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('n');
+  printf (_("n"));
   nettoe_term_reset_color();
-  printf ("etwork\n");
+  printf (_("etwork\n"));
 
   /* Info */
   puts ("");
@@ -251,9 +261,9 @@ static void main_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('I');
+  printf (_("I"));
   nettoe_term_reset_color();
-  printf ("nfo\n");
+  printf (_("nfo\n"));
 
   /* Quit */
   printf ("   (");
@@ -262,14 +272,14 @@ static void main_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('Q');
+  printf (_("Q"));
   nettoe_term_reset_color();
-  printf ("uit\n");
+  printf (_("uit\n"));
 
   while ( selection == 0 )
   {
     nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-    printf ("\n Choose an action: ");
+    printf (_("\n Choose an action: "));
     nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
 
     fflush (stdin);
@@ -343,9 +353,9 @@ static void main_menu (void)
   else
     {
       nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-      printf ("\n Error:");
+      printf (_("\n Error:"));
       nettoe_term_reset_color();
-      printf (" Incorrect choice.\n");
+      printf (_(" Incorrect choice.\n"));
       nettoe_term_set_default_color ();
       quit_game ();
     }
@@ -362,7 +372,7 @@ static void cpu_AI_menu (void)
   nettoe_term_reset_color();
   printf ("\n   [ ");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("Level of difficulty");
+  printf (_("Level of difficulty"));
   nettoe_term_reset_color();
   printf (" ]\n\n");
 
@@ -372,9 +382,9 @@ static void cpu_AI_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('W');
+  printf (_("W"));
   nettoe_term_reset_color();
-  printf ("eak \n");
+  printf (_("eak \n"));
 
   printf ("   (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
@@ -382,9 +392,9 @@ static void cpu_AI_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('N');
+  printf (_("N"));
   nettoe_term_reset_color();
-  printf ("ormal\n");
+  printf (_("ormal\n"));
 
   printf ("   (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
@@ -392,9 +402,9 @@ static void cpu_AI_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('B');
+  printf (_("B"));
   nettoe_term_reset_color();
-  printf ("etter\n");
+  printf (_("etter\n"));
 
   puts ("");
   printf ("   (");
@@ -403,18 +413,18 @@ static void cpu_AI_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('R');
+  printf (_("R"));
   nettoe_term_reset_color();
-  printf ("eturn to ");
+  printf (_("eturn to "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('m');
+  printf (_("m"));
   nettoe_term_reset_color();
-  printf ("ain menu\n");
+  printf (_("ain menu\n"));
 
   while ( selection == 0 )
   {
     nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-    printf ("\n Choice: ");
+    printf (_("\n Choice: "));
     nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
 
     fflush (stdin);
@@ -481,7 +491,7 @@ static void network_menu (void)
   nettoe_term_reset_color();
   printf ("\n   [ ");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("Network game options");
+  printf (_("Network game options"));
   nettoe_term_reset_color();
   printf (" ]\n\n");
 
@@ -491,9 +501,9 @@ static void network_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('H');
+  printf (_("H"));
   nettoe_term_reset_color();
-  printf ("ost the game\n");
+  printf (_("ost the game\n"));
 
   printf ("   (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
@@ -501,9 +511,9 @@ static void network_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('C');
+  printf (_("C"));
   nettoe_term_reset_color();
-  printf ("onnect to host\n");
+  printf (_("onnect to host\n"));
 
   puts ("");
   printf ("   (");
@@ -512,18 +522,18 @@ static void network_menu (void)
   nettoe_term_reset_color();
   printf (") ");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('B');
+  printf (_("B"));
   nettoe_term_reset_color();
-  printf ("ack to ");
+  printf (_("ack to "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-  putchar ('m');
+  printf (_("m"));
   nettoe_term_reset_color();
-  printf ("ain menu\n");
+  printf (_("ain menu\n"));
 
   while ( selection == 0 )
   {
     nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
-    printf ("\n Choose an action: ");
+    printf (_("\n Choose an action: "));
     nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
 
     fflush (stdin);
@@ -578,7 +588,7 @@ static void network_menu (void)
 
   if ( has_given_eof )
     {
-      printf("\n\n Your opponent has resigned the game by cutting connections !\n");
+      printf(_("\n\n Your opponent has resigned the game by cutting connections !\n"));
       printf (" (A carrage return continues.   )\b\b\b");
       fflush (stdin);
       getchar();
@@ -591,7 +601,7 @@ static void init_one_player_game (void)
   who_starts = who_start_first ();
 
   nettoe_term_reset_color();
-  printf ("\n Please state your name: ");
+  printf (_("\n Please state your name: "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   get_player_pname(player1_name, MAX_PNAME_LEN);
 
@@ -599,20 +609,20 @@ static void init_one_player_game (void)
 
   while ((check_pname(player1_name, MAX_PNAME_LEN)) != 0)
     {
-      printf (" Error: name cannot be more than %d chars long.\n",
+      printf (_(" Error: name cannot be more than %d chars long.\n"),
 	      MAX_PNAME_LEN);
-      printf ("\n Please state your name: ");
+      printf (_("\n Please state your name: "));
       get_player_pname(player1_name, MAX_PNAME_LEN);
     }
 
   nettoe_term_reset_color();
-  printf ("\n Who will start first ?  ");
+  printf (_("\n Who will start first ?  "));
   sleep ( 1 );
 
   if (who_starts == 1)
-    printf ("You will begin ! ");
+    printf (_("You will begin ! "));
   else
-    printf ("Computer will begin ! ");
+    printf (_("Computer will begin ! "));
 
   nettoe_term_set_default_color ();
   fflush (stdout);
@@ -626,40 +636,40 @@ static void init_two_player_game (void)
   who_starts = who_start_first ();
 
   nettoe_term_reset_color();
-  printf ("\n Player 1, please type your name: ");
+  printf (_("\n Player 1, please type your name: "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   get_player_pname(player1_name, MAX_PNAME_LEN);
   nettoe_term_reset_color ();
 
   while ((check_pname(player1_name, MAX_PNAME_LEN)) != 0)
     {
-      printf (" Error: name cannot be more than %d chars long.\n",
+      printf (_(" Error: name cannot be more than %d chars long.\n"),
 	      MAX_PNAME_LEN);
-      printf ("\n Player 1, please type your name: ");
+      printf (_("\n Player 1, please type your name: "));
       get_player_pname(player1_name, MAX_PNAME_LEN);
     }
 
-  printf ("\n Player 2, please type your name: ");
+  printf (_("\n Player 2, please type your name: "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   get_player_pname(player2_name, MAX_PNAME_LEN);
   nettoe_term_reset_color ();
 
   while ((check_pname(player2_name, MAX_PNAME_LEN)) != 0)
     {
-      printf (" Error: name cannot be more than %d chars long.\n",
+      printf (_(" Error: name cannot be more than %d chars long.\n"),
 	      MAX_PNAME_LEN);
-      printf ("\n Player 2, please type your name: ");
+      printf (_("\n Player 2, please type your name: "));
       get_player_pname(player2_name, MAX_PNAME_LEN);
     }
 
   nettoe_term_reset_color();
-  printf ("\n Who will start first ?  ");
+  printf (_("\n Who will start first ?  "));
   sleep ( 1 );
 
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   printf ("%s", (who_starts == 1) ? player1_name : player2_name);
   nettoe_term_reset_color();
-  printf (" will begin ! ");
+  printf (_(" will begin ! "));
   nettoe_term_set_default_color ();
   fflush (stdout);
   sleep ( 3 );
@@ -803,7 +813,7 @@ static void do_two_player_game (void)
       printf ("\n %s", (winner == GAME_IS_X_WIN) ? player1_name
 						 : player2_name);
       nettoe_term_reset_color();
-      printf (" wins !\n");
+      printf (_(" wins !\n"));
     }
   else /* Draw */
     show_drawed_game ();
@@ -847,11 +857,11 @@ static void show_game (void)
   print_header (1);
 
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("        Current game");
+  printf (_("        Current game"));
   nettoe_term_reset_color();
   printf ("       |        ");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("Coordinate matrix\n");
+  printf (_("Coordinate matrix\n"));
   nettoe_term_reset_color();
 
   printf (SPACES_AND_BARS);
@@ -866,7 +876,7 @@ static void show_game (void)
   nettoe_term_reset_color();
   printf (BROKEN_DASHED_LINE);
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("  Score:");
+  printf (_("  Score:"));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   printf (" %s", player1_name);
   nettoe_term_reset_color();
@@ -882,17 +892,17 @@ static void show_game (void)
 static void show_drawed_game ()
 {
   show_game ();
-  printf (IS_A_DRAW);
+  printf (_(IS_A_DRAW));
 }
 
 static void show_waiting_for_move (const char *name)
 {
   show_game ();
-  printf("\n Waiting for ");
+  printf(_("\n Waiting for "));
   nettoe_term_set_color(COLOR_BLUE, ATTRIB_BRIGHT);
   printf("%s", name);
   nettoe_term_reset_color();
-  printf(" to move ... ");
+  printf(_(" to move ... "));
   fflush(stdout);
 }
 
@@ -905,7 +915,7 @@ static void get_player_move (const char *name, char pawn)
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   printf("\n %s", name);
   nettoe_term_reset_color();
-  printf(", playing %c, it is your turn: ", pawn);
+  printf(_(", playing %c, it is your turn: "), pawn);
 
   while (1)
     {
@@ -916,7 +926,7 @@ static void get_player_move (const char *name, char pawn)
 	break;
 
       fflush(stdin);
-      printf(" Invalid move. Try again: ");
+      printf(_(" Invalid move. Try again: "));
     } /* while(1) */
 }
 
@@ -940,21 +950,21 @@ static void server_start (void)
   nettoe_term_reset_color();
   printf ("\n   [ ");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("Host the game");
+  printf (_("Host the game"));
   nettoe_term_reset_color();
   printf (" ]\n\n");
 
-  printf ("    Player name: ");
+  printf (_("    Player name: "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   get_player_pname(player1_name, MAX_PNAME_LEN);
   nettoe_term_reset_color();
   local_ip_address[0] = '\0';
   give_local_IP (local_ip_address, sizeof(local_ip_address));
 
-  printf ("\n   You should now tell your IP address to any interested\n");
-  printf ("   competitor. There might be more than one address, but\n");
-  printf ("   \"%s\" should do.\n", local_ip_address);
-  printf ("\n   Connected players:\n");
+  printf (_("\n   You should now tell your IP address to any interested\n"));
+  printf (_("   competitor. There might be more than one address, but\n"));
+  printf (_("   \"%s\" should do.\n"), local_ip_address);
+  printf (_("\n   Connected players:\n"));
   printf ("   ------------------\n");
   printf ("   -");
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
@@ -962,7 +972,7 @@ static void server_start (void)
   nettoe_term_reset_color();
   printf (" (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("you");
+  printf (_("you"));
   nettoe_term_reset_color();
   printf (")\n");
 
@@ -989,14 +999,14 @@ static void server_start (void)
   nettoe_term_reset_color();
   printf (" (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("your opponent");
+  printf (_("your opponent"));
   nettoe_term_reset_color();
   printf (")\n");
 
-  printf ("\n   Two players are present. Let us play !\n");
+  printf (_("\n   Two players are present. Let us play !\n"));
   sleep ( 3 );
 
-  printf ("\n   Who will start first ?  ");
+  printf (_("\n   Who will start first ?  "));
 
   who_starts = who_start_first ();
 
@@ -1014,8 +1024,8 @@ static void server_start (void)
     }
 
   nettoe_term_reset_color();
-  printf (" will begin !\n");
-  printf ("\n   Starting game ... ");
+  printf (_(" will begin !\n"));
+  printf (_("\n   Starting game ... "));
   fflush (stdout);
 
   nettoe_term_set_default_color ();
@@ -1038,19 +1048,19 @@ static void client_start (void)
   nettoe_term_reset_color();
   printf ("\n   [ ");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("Connect to host");
+  printf (_("Connect to host"));
   nettoe_term_reset_color();
   printf (" ]\n\n");
-  printf ("    Player name: ");
+  printf (_("    Player name: "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   get_player_pname(player2_name, MAX_PNAME_LEN);
   nettoe_term_reset_color();
-  printf ("\n    Host to connect to (IP or hostname): ");
+  printf (_("\n    Host to connect to (IP or hostname): "));
   nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
   if (scanf (" %46s", host_ip_number) != 1)
     host_ip_number[0] = '\0';
   nettoe_term_reset_color();
-  printf ("\n   Connecting ... ");
+  printf (_("\n   Connecting ... "));
 
   sock = connect_to_socket (host_ip_number, SERVER_PORT_NUMBER);
 
@@ -1062,9 +1072,9 @@ static void client_start (void)
       return;
     }
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("connected !\n\n");
+  printf (_("connected !\n\n"));
   nettoe_term_reset_color();
-  printf ("   The players are:\n\n");
+  printf (_("   The players are:\n\n"));
   read_from_socket (sock, player1_name, sizeof(player1_name));
 
   printf ("   -");
@@ -1073,7 +1083,7 @@ static void client_start (void)
   nettoe_term_reset_color();
   printf (" (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("your opponent");
+  printf (_("your opponent"));
   nettoe_term_reset_color();
   printf (")\n");
 
@@ -1083,16 +1093,16 @@ static void client_start (void)
   nettoe_term_reset_color();
   printf (" (");
   nettoe_term_set_color (COLOR_RED, ATTRIB_BRIGHT);
-  printf ("you");
+  printf (_("you"));
   nettoe_term_reset_color();
   printf (")\n");
 
   write_to_socket (sock, player2_name, sizeof(player2_name));
 
-  printf ("\n   Two players are present. Let us play !\n");
+  printf (_("\n   Two players are present. Let us play !\n"));
   sleep ( 3 );
 
-  printf ("\n   Who will start first ?  ");
+  printf (_("\n   Who will start first ?  "));
 
   if ( ! has_given_eof )
   {
@@ -1104,8 +1114,8 @@ static void client_start (void)
     nettoe_term_set_color (COLOR_BLUE, ATTRIB_BRIGHT);
     printf ("%s", buf);
     nettoe_term_reset_color();
-    printf (" will begin !\n");
-    printf ("\n   Starting game ... ");
+    printf (_(" will begin !\n"));
+    printf (_("\n   Starting game ... "));
     fflush (stdout);
     nettoe_term_set_default_color ();
     sleep ( 3 );
@@ -1208,7 +1218,7 @@ static void init_server_network_game (void)
       nettoe_term_set_color(COLOR_BLUE, ATTRIB_BRIGHT);
       printf("\n %s", player2_name);
       nettoe_term_reset_color();
-      printf (" wins !\n");
+      printf (_(" wins !\n"));
     }
   else if (winner == GAME_IS_DRAW)	/* Draw */
     show_drawed_game ();
@@ -1250,8 +1260,8 @@ static void init_server_network_game (void)
       if (!has_given_eof
           && (!strncmp (yes_no, "y", 2) || !strncmp (yes_no, "Y", 2)))
 	{
-	  printf ("\n %s wants to play again.\n", player2_name);
-	  printf (" Starting ... ");
+	  printf (_("\n %s wants to play again.\n"), player2_name);
+	  printf (_(" Starting ... "));
 	  fflush (stdout);
 	  sleep ( 4 );
 	  init_server_network_game ();
@@ -1319,7 +1329,7 @@ static void init_client_network_game (void)
       nettoe_term_set_color(COLOR_BLUE, ATTRIB_BRIGHT);
       printf("\n %s", player1_name);
       nettoe_term_reset_color();
-      printf (" wins !\n");
+      printf (_(" wins !\n"));
     }
   else if (winner == GAME_IS_O_WIN)
     {
@@ -1346,7 +1356,7 @@ static void init_client_network_game (void)
 
   if (!strncmp (yes_no, "y", 2) || !strncmp (yes_no, "Y", 2))
     {
-      printf ("\n %s wants to play again. What about you ?\n", player1_name);
+      printf (_("\n %s wants to play again. What about you ?\n"), player1_name);
       nettoe_beep();
       printf (WANT_TO_PLAY);
       if (scanf ("%11s", y_n) != 1)
@@ -1357,7 +1367,7 @@ static void init_client_network_game (void)
 	{
 	  write_to_socket (sock, "y", 2);
 	  write_to_socket (sock, "n", 2);
-	  printf ("Ending session ...\n");
+	  printf (_("Ending session ...\n"));
 	  close (sock);
 	}
       else
@@ -1369,7 +1379,7 @@ static void init_client_network_game (void)
 	    }
 	  write_to_socket (sock, "y", 2);
 	  write_to_socket (sock, "y", 2);
-	  printf (" Starting ... ");
+	  printf (_(" Starting ... "));
 	  fflush (stdout);
 	  sleep ( 4 );
 	  init_client_network_game ();
@@ -1377,7 +1387,7 @@ static void init_client_network_game (void)
     }
   else
     {
-      printf ("\n %s doesn't want to play again. Sorry.\n", player1_name);
+      printf (_("\n %s doesn't want to play again. Sorry.\n"), player1_name);
       sleep ( 3 );
       close (sock);
       return;
@@ -1414,11 +1424,11 @@ static void quit_game (void)
 {
   nettoe_term_reset_color();
 
-  printf("\n Goodbye !\n\n");
+  printf(_("\n Goodbye !\n\n"));
 
-  printf("netToe Copyright 2000,2001 Gabriele Giorgetti\n");
-  printf("       Copyright 2009-2014 Mats Erik Andersson\n");
-  printf("netToe project homepage: %s\n\n", HOMEPAGE);
+  printf(_("netToe Copyright 2000,2001 Gabriele Giorgetti\n"));
+  printf(_("       Copyright 2009-2014 Mats Erik Andersson\n"));
+  printf(_("netToe project homepage: %s\n\n"), HOMEPAGE);
 
   close (sock);
 
